@@ -5,24 +5,26 @@ import { Link, useNavigate } from "react-router-dom";
 import productDemoImg from "../../assets/img/products/product-img-2.jpg";
 import { Store } from "../../Store/Store";
 export const Cart = () => {
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const {
     cart: { cartItems },
   } = state;
   const updateCartHandler = async (item, quantity) => {
-    const { data } = await axios.get(`/api/products/${item._id}`);
+    const { data } = await axios.get(
+      `${process.env.REACT_APP_API_URL}/api/products/${item._id}`
+    );
     if (data.countInStock < quantity) {
-      window.alert('Sorry. Product is out of stock');
+      window.alert("Sorry. Product is out of stock");
       return;
     }
     ctxDispatch({
-      type: 'CART_ADD_ITEM',
+      type: "CART_ADD_ITEM",
       payload: { ...item, quantity },
     });
   };
   const removeItemHandler = (item) => {
-    ctxDispatch({ type: 'CART_REMOVE_ITEM', payload: item });
+    ctxDispatch({ type: "CART_REMOVE_ITEM", payload: item });
   };
   //console.log(cartItems);
   return (
@@ -41,7 +43,7 @@ export const Cart = () => {
       </div> */}
 
       <div className="cart-section mt-150 mb-80">
-      <div class="section-title" style={{ textAlign: "center" }}>
+        <div class="section-title" style={{ textAlign: "center" }}>
           <h3>Chart</h3>
         </div>
         <div className="container">
@@ -67,7 +69,7 @@ export const Cart = () => {
                         return (
                           <tr className="table-body-row" key={_id}>
                             <td className="product-remove" key={_id}>
-                              <button  onClick={() => removeItemHandler(item)}>
+                              <button onClick={() => removeItemHandler(item)}>
                                 <i className="far fa-window-close"></i>
                               </button>
                             </td>
@@ -77,23 +79,27 @@ export const Cart = () => {
                             <td className="product-name">{item.name}</td>
                             <td className="product-price">${item.price}</td>
                             <td className="product-quantity">
-                            <Button
+                              <Button
                                 variant="light"
-                                disabled={item.quantity===1}
+                                disabled={item.quantity === 1}
                                 onClick={() =>
                                   updateCartHandler(item, item.quantity - 1)
                                 }
-                              > <i className="fas fa-minus-circle"></i> </Button>
-                                 {item.quantity} {" "}
+                              >
+                                {" "}
+                                <i className="fas fa-minus-circle"></i>{" "}
+                              </Button>
+                              {item.quantity}{" "}
                               <Button
                                 variant="light"
-                                disabled={item.quantity===item.countInStock}
+                                disabled={item.quantity === item.countInStock}
                                 onClick={() =>
                                   updateCartHandler(item, item.quantity + 1)
                                 }
-                              > <i className="fas fa-plus-circle"></i> </Button>{" "}
-                             
-                              
+                              >
+                                {" "}
+                                <i className="fas fa-plus-circle"></i>{" "}
+                              </Button>{" "}
                             </td>
                             <td className="product-total">
                               {item.price * item.quantity}
@@ -120,8 +126,14 @@ export const Cart = () => {
                         <td>
                           <strong>Subtotal: </strong>
                         </td>
-                       
-                        <td>${cartItems.reduce((a,c)=>a + c.price* c.quantity,0)}</td>
+
+                        <td>
+                          $
+                          {cartItems.reduce(
+                            (a, c) => a + c.price * c.quantity,
+                            0
+                          )}
+                        </td>
                       </tr>
                       <tr className="total-data">
                         <td>
@@ -133,14 +145,23 @@ export const Cart = () => {
                         <td>
                           <strong>Total: </strong>
                         </td>
-                        <td>${cartItems.reduce((a,c)=>a + c.price* c.quantity,0)+45}</td>
+                        <td>
+                          $
+                          {cartItems.reduce(
+                            (a, c) => a + c.price * c.quantity,
+                            0
+                          ) + 45}
+                        </td>
                       </tr>
                     </tbody>
                   </table>
                   <div className="cart-buttons">
-                    <button className="boxed-btn black" onClick={()=> navigate('/login?redirect=/checkout')}>
+                    <button
+                      className="boxed-btn black"
+                      onClick={() => navigate("/login?redirect=/checkout")}
+                    >
                       {" "}
-                      Check Out 
+                      Check Out
                     </button>
                   </div>
                 </div>
