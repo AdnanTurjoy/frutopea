@@ -1,0 +1,88 @@
+.button {
+    border: none;
+    border-radius: 2px;
+    padding: 5px 10px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #F28123;
+    outline: none;
+    color: white;
+    font-weight: 500;
+}
+
+.ripple {
+    background-position: center;
+    transition: background 0.8s;
+}
+
+.ripple:hover {
+    background-color: #F28123;
+    background-image: radial-gradient(circle, transparent 1%, #F28123 1%);
+    background-position: center;
+    background-size: 15000%;
+}
+
+.ripple:active {
+    transition: background 0s;
+    background-color: #F28123;
+    background-size: 100%;
+}
+
+.navLink {
+    font-size: 15px;
+    font-weight: 500;
+    color: white;
+    text-decoration: none;
+    padding: 16px;
+    margin: 0px 4px;
+}
+
+.navLink:hover {
+    color: #F28123;
+}
+
+.navbarScroll {
+    box-shadow: 0 0 10px 0 rgb(0 0 0 / 20%);
+    background-color: #051922;
+    transition: 1s;
+}
+
+.stickyTop {
+    position: sticky;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 1020;
+    background-color: black;
+}
+
+.fixedTop {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 1030;
+}
+
+.active-link-color {
+    color: #F28123;
+}
+
+@media (max-width: 576px) {
+
+    .container {
+        width: 93%;
+    }
+
+    .navbarNotScroll {
+        background-color: black;
+    }
+
+    .toggle-btn {
+        background-color: white;
+    }
+
+    .logOut-lonIn {
+        text-align: center;
+    }
+}
