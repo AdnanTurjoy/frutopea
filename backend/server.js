@@ -2,7 +2,8 @@ import express from "express";
 import path from "path";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-const cors = require("cors");
+import cors from "cors";
+
 import seedRouter from "./routes/seedRoutes.js";
 import productRouter from "./routes/productRoutes.js";
 import userRouter from "./routes/userRoutes.js";
