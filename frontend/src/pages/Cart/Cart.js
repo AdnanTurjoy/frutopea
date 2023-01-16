@@ -42,7 +42,7 @@ export const Cart = () => {
         </div>
       </div> */}
 
-      <div className="cart-section mt-150 mb-80">
+      <div className="cart-section mb-80" style={{ marginTop: "20px" }}>
         <div class="section-title" style={{ textAlign: "center" }}>
           <h3>Chart</h3>
         </div>

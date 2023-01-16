@@ -4,7 +4,7 @@ import BestMonth from "../components/BestMonth";
 import ClientCarosol from "../components/ClientCarosol/ClientCarosol";
 
 import LatestNews from "../components/LatestNews";
-
+import HomeProduct from "../components/Products/HomeProduct";
 
 import Product from "../components/Products/Product";
 
@@ -13,19 +13,17 @@ import Testimoni from "../components/Testimoni";
 import Products from "./Product/Products";
 const Home = () => {
   return (
-  <>
+    <>
+      {/* <Search/> */}
 
-   {/* <Search/> */}
- 
-   <Banner/>
-   <Section/>
-   <Products/>
-   <BestMonth/>
-   <Testimoni/>         
-   <LatestNews/>
-   <ClientCarosol/>
-
-  </>
+      <Banner />
+      <Section />
+      <HomeProduct />
+      <BestMonth />
+      <Testimoni />
+      <LatestNews />
+      <ClientCarosol />
+    </>
   );
 };
 

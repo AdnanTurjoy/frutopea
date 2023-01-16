@@ -1,11 +1,13 @@
-import React, { useContext, useEffect, useReducer } from "react";
+import React, { useContext, useEffect, useReducer, useState } from "react";
 import productImg1 from "../../assets/img/products/product-img-5.jpg";
 import productImg2 from "../../assets/img/products/product-img-4.jpg";
 import axios from "axios";
-
-import { Button } from "react-bootstrap";
+import "./Product.css";
+import { Button, Spinner } from "react-bootstrap";
 import Data from "../../data";
 import Product from "../../components/Products/Product";
+import { toast } from "react-toastify";
+import { getError } from "../../utils";
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_REQUEST":
@@ -32,6 +34,9 @@ const reducer = (state, action) => {
 };
 
 const Products = () => {
+  const [categories, setCategories] = useState([]);
+  const [totalProducts, setTotalProducts] = useState([]);
+  const [searchedName, setSearchedName] = useState("");
   const [{ loading, error, products }, dispatch] = useReducer(reducer, {
     products: [],
     loading: true,
@@ -44,72 +49,120 @@ const Products = () => {
         const result = await axios.get(
           `${process.env.REACT_APP_API_URL}/api/products`
         );
+        setTotalProducts(result.data);
         dispatch({ type: "FETCH_SUCCESS", payload: result.data });
       } catch (error) {
         dispatch({ type: "FETCH_FAIL", payload: error.message });
       }
     };
+    const fetchCategories = async () => {
+      try {
+        const { data } = await axios.get(
+          `${process.env.REACT_APP_API_URL}/api/products/categories`
+        );
+        setCategories(data);
+      } catch (err) {
+        toast.error(getError(err));
+      }
+    };
+    fetchCategories();
     fetchData();
   }, []);
+  const handleCategory = (category) => {
+    setTotalProducts(
+      products.filter((product) => product.category === category)
+    );
+  };
 
-  console.log(products);
+  useEffect(() => {
+    let value = searchedName.toLowerCase();
+    const SearchedProductText = products.filter((product) => {
+      const productValue = product.name.toLowerCase();
+      return productValue.includes(value);
+    });
+    setTotalProducts(SearchedProductText);
+  }, [searchedName]);
+
   return (
     <div>
-      {loading ? (
-        "loading..."
-      ) : (
-        <div className="product-section mt-150 mb-150">
-          <div className="container">
-            <div className="row">
-              <div className="col-md-12">
-                <div className="product-filters">
-                  <ul>
-                    <li className="active" data-filter="*">
-                      All
-                    </li>
-                    <li data-filter=".strawberry">Strawberry</li>
-                    <li data-filter=".berry">Berry</li>
-                    <li data-filter=".lemon">Lemon</li>
-                  </ul>
-                </div>
+      <div className="product-section  mb-150">
+        <div className="section-title pt-5 m-0" style={{ textAlign: "center" }}>
+          <h3>Products</h3>
+        </div>
+
+        <div className="container">
+          <div className="row">
+            <div className="col-md-12">
+              <div className="product-filters m-0">
+                <ul>
+                  <li
+                    className="active"
+                    data-filter="*"
+                    onClick={() => setTotalProducts(products)}
+                  >
+                    All
+                  </li>
+                  {categories?.map((category) => {
+                    return (
+                      <li onClick={() => handleCategory(category)}>
+                        {category}
+                      </li>
+                    );
+                  })}
+                  <p className="mb-4">
+                    {" "}
+                    <input
+                      className="search-input"
+                      type="text"
+                      placeholder="search"
+                      name="name"
+                      value={searchedName}
+                      onChange={(e) => setSearchedName(e.target.value)}
+                    />{" "}
+                  </p>
+                </ul>
               </div>
             </div>
+          </div>
 
-            <div className="row product-lists">
-              {products &&
-                products.map((product) => {
-                  return <Product product={product} />;
-                })}
+          <div className="row product-lists">
+            <div style={{ textAlign: "center" }}>
+              {loading && <Spinner animation="border" />}
             </div>
 
-            <div className="row">
-              <div className="col-lg-12 text-center">
-                <div className="pagination-wrap">
-                  <ul>
-                    <li>
-                      <a href="#">Prev</a>
-                    </li>
-                    <li>
-                      <a href="#">1</a>
-                    </li>
-                    <li>
-                      <a className="active" href="#">
-                        2
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">3</a>
-                    </li>
-                    <li>
-                      <a href="#">Next</a>
-                    </li>
-                  </ul>
-                </div>
+            {totalProducts &&
+              totalProducts.map((product) => {
+                return <Product product={product} />;
+              })}
+          </div>
+
+          <div className="row">
+            <div className="col-lg-12 text-center">
+              <div className="pagination-wrap">
+                <ul>
+                  <li>
+                    <a href="#">Prev</a>
+                  </li>
+                  <li>
+                    <a href="#">1</a>
+                  </li>
+                  <li>
+                    <a className="active" href="#">
+                      2
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#">3</a>
+                  </li>
+                  <li>
+                    <a href="#">Next</a>
+                  </li>
+                </ul>
               </div>
             </div>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };

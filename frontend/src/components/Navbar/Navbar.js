@@ -2,14 +2,14 @@ import React, { useContext, useEffect } from "react";
 import { Badge, Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 
 import { Link, useLocation } from "react-router-dom";
-
+import { LinkContainer } from "react-router-bootstrap";
 import "./Navbar.css";
 import { useState } from "react";
-
 
 import { Store } from "../../Store/Store";
 const Header = () => {
   const location = useLocation();
+  const [isDropdown, setIsDropdown] = useState(false);
   // CONTEXT API
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const { cart, userInfo } = state;
@@ -33,11 +33,11 @@ const Header = () => {
   let user = true;
   window.addEventListener("scroll", scrollWindow);
   const signoutHandler = () => {
-    ctxDispatch({ type: 'USER_SIGNOUT' });
-    localStorage.removeItem('userInfo');
-    localStorage.removeItem('shippingAddress');
-    localStorage.removeItem('paymentMethod');
-    window.location.href = '/login';
+    ctxDispatch({ type: "USER_SIGNOUT" });
+    localStorage.removeItem("userInfo");
+    localStorage.removeItem("shippingAddress");
+    localStorage.removeItem("paymentMethod");
+    window.location.href = "/login";
   };
   return (
     <Navbar
@@ -112,8 +112,8 @@ const Header = () => {
             >
               <i className="fas fa-shopping-cart">
                 {cart.cartItems.length > 0 && (
-                  <Badge pill bg="danger" >
-                    {cart.cartItems.reduce((a,c)=>a+c.quantity,0)}
+                  <Badge pill bg="danger">
+                    {cart.cartItems.reduce((a, c) => a + c.quantity, 0)}
                   </Badge>
                 )}
               </i>
@@ -129,33 +129,121 @@ const Header = () => {
               <i className="fas fa-search"></i>
             </Link>
           </Nav>
-          
-          {userInfo ? (
-                    <NavDropdown title={ <Link className="m-0">
-                    <button className="button ripple " >{userInfo.name}</button>
-                  </Link>} >
-                      <Link to="/profile">
-                        <NavDropdown.Item >User Profile</NavDropdown.Item>
-                      </Link>
-                      <Link to="/orderhistory">
-                        <NavDropdown.Item>Order History</NavDropdown.Item>
-                      </Link>
-                      <NavDropdown.Divider />
-                      <NavDropdown.Item><Nav className="logOut-lonIn">
-                <button className="button ripple" onClick={signoutHandler}>Log Out</button>
-                </Nav></NavDropdown.Item>
-                   
-                    </NavDropdown>
-                  ) : (
-                    <Link className="m-0" smooth to="/login">
-                <button className="button ripple " >Log In</button>
-              </Link>
-                  )}
-         {" "}
-              
-              
-             
-    
+          {userInfo && !userInfo.isAdmin && (
+            <div className="dropdown ">
+              <a
+                className="btn btn-secondary dropdown-toggle"
+                style={{
+                  backgroundColor: "#F28123",
+                  color: "white",
+                  border: "none",
+                }}
+                role="button"
+                id="dropdownMenuLink"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+                onClick={() => setIsDropdown(!isDropdown)}
+              >
+                {userInfo?.name}
+              </a>
+
+              <div
+                className={`dropdown-menu ${isDropdown ? "show" : ""}`}
+                aria-labelledby="dropdownMenuLink"
+              >
+                <Link
+                  className="dropdown-item"
+                  to="/profile"
+                  onClick={() => setIsDropdown(!isDropdown)}
+                >
+                  User Profile
+                </Link>
+                <Link
+                  className="dropdown-item"
+                  to="/orderhistory"
+                  onClick={() => setIsDropdown(!isDropdown)}
+                >
+                  Order History
+                </Link>
+                <div class="dropdown-divider"></div>
+                <button
+                  className="dropdown-item btn btn-secondary "
+                  onClick={signoutHandler}
+                  // onClick={() => setIsDropdown(!isDropdown)}
+                >
+                  Logout
+                </button>
+              </div>
+            </div>
+          )}
+          {userInfo && userInfo?.isAdmin && (
+            <div className="dropdown ">
+              <a
+                className="btn btn-secondary dropdown-toggle"
+                style={{
+                  backgroundColor: "#F28123",
+                  color: "white",
+                  border: "none",
+                }}
+                role="button"
+                id="dropdownMenuLink"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+                onClick={() => setIsDropdown(!isDropdown)}
+              >
+                {userInfo?.name}
+              </a>
+
+              <div
+                className={`dropdown-menu ${isDropdown ? "show" : ""}`}
+                aria-labelledby="dropdownMenuLink"
+              >
+                <Link
+                  className="dropdown-item"
+                  to="/admin/dashboard"
+                  onClick={() => setIsDropdown(!isDropdown)}
+                >
+                  Dashboard
+                </Link>
+                <Link
+                  className="dropdown-item"
+                  to="/admin/products"
+                  onClick={() => setIsDropdown(!isDropdown)}
+                >
+                  Products
+                </Link>
+                <Link
+                  className="dropdown-item"
+                  to="/admin/orders"
+                  onClick={() => setIsDropdown(!isDropdown)}
+                >
+                  Orders
+                </Link>
+                <Link
+                  className="dropdown-item"
+                  to="/admin/users"
+                  onClick={() => setIsDropdown(!isDropdown)}
+                >
+                  Users
+                </Link>
+                <div class="dropdown-divider"></div>
+                <button
+                  className="dropdown-item btn btn-secondary "
+                  onClick={signoutHandler}
+                  // onClick={() => setIsDropdown(!isDropdown)}
+                >
+                  Logout
+                </button>
+              </div>
+            </div>
+          )}
+          {!userInfo && (
+            <Link className="m-0" smooth to="/login">
+              <button className="button ripple ">Log In</button>
+            </Link>
+          )}
         </Navbar.Collapse>
       </Container>
     </Navbar>

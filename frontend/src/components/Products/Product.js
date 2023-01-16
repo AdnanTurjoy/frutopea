@@ -4,6 +4,7 @@ import productImg2 from "../../assets/img/products/product-img-2.jpg";
 import { Store } from "../../Store/Store";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 const Product = ({ product }) => {
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const { cart } = state;
@@ -32,9 +33,9 @@ const Product = ({ product }) => {
     <div className="col-lg-4 col-md-6 text-center strawberry">
       <div className="single-product-item">
         <div className="product-image">
-          <a href="single-product.html">
+          <Link to={`/product/${product?.slug}`}>
             <img src={productImg2} alt="" />
-          </a>
+          </Link>
         </div>
         <h3>{product?.name}</h3>
         <p className="product-price">

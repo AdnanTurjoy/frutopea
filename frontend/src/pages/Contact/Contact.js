@@ -125,13 +125,10 @@ const Contact = () => {
       <div className="embed-responsive embed-responsive-21by9">
         <iframe
           src="https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d915.4675584861387!2d89.95758736752167!3d23.392911273365755!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1skhan%20villa!5e0!3m2!1sen!2sbd!4v1672943317894!5m2!1sen!2sbd"
-          width="600"
+          width="100%"
           height="450"
-          style="border:0;"
           allowFullScreen=""
           loading="lazy"
-          width="600"
-          height="450"
           frameBorder="0"
           style={{ border: "0" }}
           referrerPolicy="no-referrer-when-downgrade"

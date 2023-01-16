@@ -1,0 +1,12 @@
+.search-input{
+    width: 100%;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    background-color: white;
+    background-image: url('./../../assets/img/search-icon.png');
+    background-position: 10px 17px; 
+    background-repeat: no-repeat;
+    padding: 12px 20px 12px 40px;
+}

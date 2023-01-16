@@ -1,100 +1,297 @@
-import React from 'react'
-import productImg2 from "../../assets/img/products/product-img-4.jpg"
-import productImg1 from "../../assets/img/products/product-img-2.jpg"
-const SingleProduct = () => {
-  return (
-    <div>
-        <div className="breadcrumb-section breadcrumb-bg">
-		<div className="container">
-			<div className="row">
-				<div className="col-lg-8 offset-lg-2 text-center">
-					<div className="breadcrumb-text">
-						<p>See more Details</p>
-						<h1>Single Product</h1>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-    <div className="single-product mt-150 mb-150">
-		<div className="container">
-			<div className="row">
-				<div className="col-md-5">
-					<div className="single-product-img">
-						<img src={productImg2} alt=""/>
-					</div>
-				</div>
-				<div className="col-md-7">
-					<div className="single-product-content">
-						<h3>Green apples have polyphenols</h3>
-						<p className="single-product-pricing"><span>Per Kg</span> $50</p>
-						<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dicta sint dignissimos, rem commodi cum voluptatem quae reprehenderit repudiandae ea tempora incidunt ipsa, quisquam animi perferendis eos eum modi! Tempora, earum.</p>
-						<div className="single-product-form">
-							<form action="index.html">
-								<input type="number" placeholder="0"/>
-							</form>
-							<a href="cart.html" className="cart-btn"><i className="fas fa-shopping-cart"></i> Add to Cart</a>
-							<p><strong>Categories: </strong>Fruits, Organic</p>
-						</div>
-						<h4>Share:</h4>
-						<ul className="product-share">
-							<li><a href=""><i className="fab fa-facebook-f"></i></a></li>
-							<li><a href=""><i className="fab fa-twitter"></i></a></li>
-							<li><a href=""><i className="fab fa-google-plus-g"></i></a></li>
-							<li><a href=""><i className="fab fa-linkedin"></i></a></li>
-						</ul>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-    {/* RELATED PRODUCT */}
-    <div class="more-products mb-150">
-		<div class="container">
-			<div class="row">
-				<div class="col-lg-8 offset-lg-2 text-center">
-					<div class="section-title">	
-						<h3><span class="orange-text">Related</span> Products</h3>
-						<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid, fuga quas itaque eveniet beatae optio.</p>
-					</div>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-lg-4 col-md-6 text-center">
-					<div class="single-product-item">
-						<div class="product-image">
-							<a href="single-product.html"><img src={productImg1} alt=""/></a>
-						</div>
-						<h3>Strawberry</h3>
-						<p class="product-price"><span>Per Kg</span> 85$ </p>
-						<a href="cart.html" class="cart-btn"><i class="fas fa-shopping-cart"></i> Add to Cart</a>
-					</div>
-				</div>
-				<div class="col-lg-4 col-md-6 text-center">
-					<div class="single-product-item">
-						<div class="product-image">
-							<a href="single-product.html"><img src={productImg1} alt=""/></a>
-						</div>
-						<h3>Berry</h3>
-						<p class="product-price"><span>Per Kg</span> 70$ </p>
-						<a href="cart.html" class="cart-btn"><i class="fas fa-shopping-cart"></i> Add to Cart</a>
-					</div>
-				</div>
-				<div class="col-lg-4 col-md-6 offset-lg-0 offset-md-3 text-center">
-					<div class="single-product-item">
-						<div class="product-image">
-							<a href="single-product.html"><img src={productImg1} alt=""/></a>
-						</div>
-						<h3>Lemon</h3>
-						<p class="product-price"><span>Per Kg</span> 35$ </p>
-						<a href="cart.html" class="cart-btn"><i class="fas fa-shopping-cart"></i> Add to Cart</a>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-    </div>
-  )
-}
+import axios from "axios";
+import { useContext, useEffect, useReducer, useRef, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Card from "react-bootstrap/Card";
+import ListGroup from "react-bootstrap/ListGroup";
+import Form from "react-bootstrap/Form";
+import Badge from "react-bootstrap/Badge";
+import Button from "react-bootstrap/Button";
+import Rating from "../../components/Rating/Rating";
+import productImg2 from "../../assets/img/products/product-img-4.jpg";
+import { getError } from "../../utils";
+import { Store } from "../../Store/Store";
+import FloatingLabel from "react-bootstrap/FloatingLabel";
+import { toast } from "react-toastify";
+import { Spinner } from "react-bootstrap";
 
-export default SingleProduct
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "REFRESH_PRODUCT":
+      return { ...state, product: action.payload };
+    case "CREATE_REQUEST":
+      return { ...state, loadingCreateReview: true };
+    case "CREATE_SUCCESS":
+      return { ...state, loadingCreateReview: false };
+    case "CREATE_FAIL":
+      return { ...state, loadingCreateReview: false };
+    case "FETCH_REQUEST":
+      return { ...state, loading: true };
+    case "FETCH_SUCCESS":
+      return { ...state, product: action.payload, loading: false };
+    case "FETCH_FAIL":
+      return { ...state, loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+function ProductScreen() {
+  let reviewsRef = useRef();
+
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState("");
+  const [selectedImage, setSelectedImage] = useState("");
+
+  const navigate = useNavigate();
+  const params = useParams();
+  const { slug } = params;
+
+  const [{ loading, error, product, loadingCreateReview }, dispatch] =
+    useReducer(reducer, {
+      product: [],
+      loading: true,
+      error: "",
+    });
+  useEffect(() => {
+    const fetchData = async () => {
+      dispatch({ type: "FETCH_REQUEST" });
+      try {
+        const result = await axios.get(
+          `${process.env.REACT_APP_API_URL}/api/products/slug/${slug}`
+        );
+        dispatch({ type: "FETCH_SUCCESS", payload: result.data });
+      } catch (err) {
+        dispatch({ type: "FETCH_FAIL", payload: getError(err) });
+      }
+    };
+    fetchData();
+  }, [slug]);
+
+  const { state, dispatch: ctxDispatch } = useContext(Store);
+  const { cart, userInfo } = state;
+  const addToCartHandler = async () => {
+    const existItem = cart.cartItems.find((x) => x._id === product._id);
+    const quantity = existItem ? existItem.quantity + 1 : 1;
+    const { data } = await axios.get(
+      `${process.env.REACT_APP_API_URL}/api/products/${product._id}`
+    );
+    if (data.countInStock < quantity) {
+      window.alert("Sorry. Product is out of stock");
+      return;
+    }
+    ctxDispatch({
+      type: "CART_ADD_ITEM",
+      payload: { ...product, quantity },
+    });
+    navigate("/cart");
+  };
+
+  const submitHandler = async (e) => {
+    e.preventDefault();
+    if (!comment || !rating) {
+      toast.error("Please enter comment and rating");
+      return;
+    }
+    try {
+      const { data } = await axios.post(
+        `${process.env.REACT_APP_API_URL}/api/products/${product._id}/reviews`,
+        { rating, comment, name: userInfo.name },
+        {
+          headers: { Authorization: `Bearer ${userInfo.token}` },
+        }
+      );
+
+      dispatch({
+        type: "CREATE_SUCCESS",
+      });
+      toast.success("Review submitted successfully");
+      product.reviews.unshift(data.review);
+      product.numReviews = data.numReviews;
+      product.rating = data.rating;
+      dispatch({ type: "REFRESH_PRODUCT", payload: product });
+      window.scrollTo({
+        behavior: "smooth",
+        top: reviewsRef.current.offsetTop,
+      });
+    } catch (error) {
+      toast.error(getError(error));
+      dispatch({ type: "CREATE_FAIL" });
+    }
+  };
+  return loading ? (
+    <Spinner animation="border" />
+  ) : error ? (
+    toast.error(error)
+  ) : (
+    <div style={{ marginTop: "20px" }}>
+      <div className="single-product  m-0">
+        <div className="container">
+          <Row>
+            <Col md={5}>
+              <img
+                className="single-product-img"
+                //   src={selectedImage || product.image}
+                src={productImg2}
+                alt={product.name}
+              ></img>
+            </Col>
+            <Col md={6}>
+              <ListGroup variant="flush">
+                <ListGroup.Item>
+                  <h1>{product.name}</h1>
+                </ListGroup.Item>
+                <ListGroup.Item>
+                  <Rating
+                    rating={product.rating}
+                    numReviews={product.numReviews}
+                  ></Rating>
+                </ListGroup.Item>
+                <ListGroup.Item className="price">
+                  Price : ${product.price}
+                </ListGroup.Item>
+                <ListGroup.Item>
+                  <Row xs={1} md={2} className="g-2">
+                    {[product.image, ...product.images].map((x) => (
+                      <Col key={x}>
+                        <Card>
+                          <Button
+                            className="thumbnail"
+                            type="button"
+                            variant="light"
+                            onClick={() => setSelectedImage(x)}
+                          >
+                            <Card.Img variant="top" src={x} alt="product" />
+                          </Button>
+                        </Card>
+                      </Col>
+                    ))}
+                  </Row>
+                </ListGroup.Item>
+                <ListGroup.Item>
+                  Description:
+                  <p>{product.description}</p>
+                </ListGroup.Item>
+                <div className="">
+                  <ListGroup variant="flush">
+                    <ListGroup.Item>
+                      <Row>
+                        <Col>Price:</Col>
+                        <Col className="single-product-pricing">
+                          ${product.price}
+                        </Col>
+                      </Row>
+                    </ListGroup.Item>
+                    <ListGroup.Item>
+                      <Row>
+                        <Col>Status:</Col>
+                        <Col>
+                          {product.countInStock > 0 ? (
+                            <Badge bg="success">In Stock</Badge>
+                          ) : (
+                            <Badge bg="danger">Unavailable</Badge>
+                          )}
+                        </Col>
+                      </Row>
+                    </ListGroup.Item>
+
+                    {product.countInStock > 0 && (
+                      <ListGroup.Item>
+                        <div className="d-grid">
+                          <Button
+                            onClick={addToCartHandler}
+                            className="btn btn-primary"
+                            style={{
+                              backgroundColor: "#F28123",
+                              border: "none",
+                            }}
+                          >
+                            Add to Cart
+                          </Button>
+                        </div>
+                      </ListGroup.Item>
+                    )}
+                  </ListGroup>
+                </div>
+              </ListGroup>
+            </Col>
+          </Row>
+          <Row>
+            <div class="more-products mb-150">
+              <div className="my-3">
+                <h2 ref={reviewsRef}>Reviews</h2>
+                <div className="mb-3">
+                  {product.reviews.length === 0 && (
+                    <Badge bg="danger">There is no review</Badge>
+                  )}
+                </div>
+                <ListGroup>
+                  {product.reviews.map((review) => (
+                    <ListGroup.Item key={review._id}>
+                      <strong>{review.name}</strong>
+                      <Rating rating={review.rating} caption=" "></Rating>
+                      <p>{review.createdAt.substring(0, 10)}</p>
+                      <p>{review.comment}</p>
+                    </ListGroup.Item>
+                  ))}
+                </ListGroup>
+                <div className="my-3">
+                  {userInfo ? (
+                    <form onSubmit={submitHandler}>
+                      <h2>Write a customer review</h2>
+                      <Form.Group className="mb-3" controlId="rating">
+                        <Form.Label>Rating</Form.Label>
+                        <Form.Select
+                          aria-label="Rating"
+                          value={rating}
+                          onChange={(e) => setRating(e.target.value)}
+                        >
+                          <option value="">Select...</option>
+                          <option value="1">1- Poor</option>
+                          <option value="2">2- Fair</option>
+                          <option value="3">3- Good</option>
+                          <option value="4">4- Very good</option>
+                          <option value="5">5- Excelent</option>
+                        </Form.Select>
+                      </Form.Group>
+                      <FloatingLabel
+                        controlId="floatingTextarea"
+                        label="Comments"
+                        className="mb-3"
+                      >
+                        <Form.Control
+                          as="textarea"
+                          placeholder="Leave a comment here"
+                          value={comment}
+                          onChange={(e) => setComment(e.target.value)}
+                        />
+                      </FloatingLabel>
+
+                      <div className="mb-3">
+                        <Button disabled={loadingCreateReview} type="submit">
+                          Submit
+                        </Button>
+                        {loadingCreateReview && <Spinner animation="border" />}
+                      </div>
+                    </form>
+                  ) : (
+                    <>
+                      {" "}
+                      Please{" "}
+                      <Link to={`/login?redirect=/product/${product.slug}`}>
+                        Sign In
+                      </Link>{" "}
+                      to write a review
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+          </Row>
+        </div>
+      </div>
+    </div>
+  );
+}
+export default ProductScreen;
