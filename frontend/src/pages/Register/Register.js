@@ -44,7 +44,9 @@ const Register = () => {
       toast.error(getError(err));
     }
   };
-
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   useEffect(() => {
     if (userInfo) {
       navigate(redirect);

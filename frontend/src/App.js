@@ -27,6 +27,9 @@ import ProtectedRoute from "./Routes/ProtectedRoute";
 function App() {
   const [loading, setLoading] = useState(true);
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+  useEffect(() => {
     setTimeout(() => {
       setLoading(false);
     }, 2000);
