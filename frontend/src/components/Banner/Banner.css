@@ -50,7 +50,8 @@
 @media only screen and (max-width: 576px) {
     
     .sliderTitle {
-        font-size: 60px;
+        font-size: 50px;
+        line-height: 1.4;
     }
     
     .sliderDescription {

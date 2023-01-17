@@ -3,7 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { Store } from "../../Store/Store";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+import { Badge } from "react-bootstrap";
 const Checkout = () => {
+  // Toggle
+  const [isShow, setIsShow] = useState(false);
   const navigate = useNavigate();
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const {
@@ -47,6 +50,7 @@ const Checkout = () => {
         location: shippingAddress.location,
       })
     );
+    setIsShow(true);
   };
 
   useEffect(() => {
@@ -67,17 +71,13 @@ const Checkout = () => {
     localStorage.setItem("paymentMethod", paymentMethodName);
     navigate("/placeorder");
   };
-  // Toggle
-  const [isShow, setIsShow] = useState(false);
+
   return (
     <div>
-    
       <div className="checkout-section mt-100 mb-150">
-	  <div class="section-title" style={{textAlign:"center"}}>
-                  <h3>
-                     Checkout
-                  </h3>
-                </div>
+        <div class="section-title" style={{ textAlign: "center" }}>
+          <h3>Checkout</h3>
+        </div>
         <div className="container">
           <div className="row">
             <div className="col-lg-8">
@@ -173,112 +173,71 @@ const Checkout = () => {
                       </div>
                     </div>
                   </div>
-                
                 </div>
               </div>
             </div>
 
             <div className="col-lg-4">
-			<div className="card single-accordion">
-                    <div className="card-header" id="headingThree">
-                      <h5 className="mb-0">
-                        <button
-                          onClick={() => setIsShow(true)}
-                          className="btn btn-link collapsed"
-                          type="button"
-                          data-toggle="collapse"
-                          data-target="#collapseThree"
-                          aria-expanded="false"
-                          aria-controls="collapseThree"
-                        >
-                          Payment Details
-                        </button>
-                      </h5>
-                    </div>
-                    <div
-                      id="collapseThree"
-                      className={`collapse ${isShow && "show"}`}
-                      aria-labelledby="headingThree"
-                      data-parent="#accordionExample"
+              <div className="card single-accordion">
+                <div className="card-header" id="headingThree">
+                  <h5 className="mb-0">
+                    <button
+                      className="btn btn-link collapsed"
+                      type="button"
+                      data-toggle="collapse"
+                      data-target="#collapseThree"
+                      aria-expanded="false"
+                      aria-controls="collapseThree"
                     >
-                      <div className="card-body">
-                        <div className="card-details">
-                          <Form onSubmit={submitPaymentHandler}>
-                            <div className="mb-3">
-                              <Form.Check
-                                type="radio"
-                                id="PayPal"
-                                label="PayPal"
-                                value="PayPal"
-                                checked={paymentMethodName === "PayPal"}
-                                onChange={(e) =>
-                                  setPaymentMethod(e.target.value)
-                                }
-                              />
-                            </div>
-                            <div className="mb-3">
-                              <Form.Check
-                                type="radio"
-                                id="Stripe"
-                                label="Stripe"
-                                value="Stripe"
-                                checked={paymentMethodName === "Stripe"}
-                                onChange={(e) =>
-                                  setPaymentMethod(e.target.value)
-                                }
-                              />
-                            </div>
-                            <div className="mb-3">
-                              <button className="boxed-btn" type="submit">Place Order</button>
-                            </div>
-                          </Form>
+                      Payment Details
+                    </button>
+                  </h5>
+                </div>
+                <div
+                  id="collapseThree"
+                  className="collapse show"
+                  aria-labelledby="headingThree"
+                  data-parent="#accordionExample"
+                >
+                  <div className="card-body">
+                    <div className="card-details">
+                      <Form onSubmit={submitPaymentHandler}>
+                        <div className="mb-3">
+                          <Form.Check
+                            type="radio"
+                            id="PayPal"
+                            label="PayPal"
+                            value="PayPal"
+                            checked={paymentMethodName === "PayPal"}
+                            onChange={(e) => setPaymentMethod(e.target.value)}
+                          />
                         </div>
-                      </div>
+                        <div className="mb-3">
+                          <Form.Check
+                            type="radio"
+                            id="Stripe"
+                            label="Stripe"
+                            value="Stripe"
+                            checked={paymentMethodName === "Stripe"}
+                            onChange={(e) => setPaymentMethod(e.target.value)}
+                          />
+                        </div>
+                        <div className="mb-3">
+                          {isShow ? (
+                            <button className="boxed-btn" type="submit">
+                              Place Order
+                            </button>
+                          ) : (
+                            <Badge  bg="danger">
+                              Add Your Shipping Address First
+                            </Badge>
+                          )}
+                        </div>
+                      </Form>
                     </div>
                   </div>
-              {/* <div className="order-details-wrap">
-                <table className="order-details">
-                  <thead>
-                    <tr>
-                      <th>Your order Details</th>
-                      <th>Price</th>
-                    </tr>
-                  </thead>
-                  <tbody className="order-details-body">
-                    <tr>
-                      <td>Product</td>
-                      <td>Total</td>
-                    </tr>
-                    <tr>
-                      <td>Strawberry</td>
-                      <td>$85.00</td>
-                    </tr>
-                    <tr>
-                      <td>Berry</td>
-                      <td>$70.00</td>
-                    </tr>
-                    <tr>
-                      <td>Lemon</td>
-                      <td>$35.00</td>
-                    </tr>
-                  </tbody>
-                  <tbody className="checkout-details">
-                    <tr>
-                      <td>Subtotal</td>
-                      <td>$190</td>
-                    </tr>
-                    <tr>
-                      <td>Shipping</td>
-                      <td>$50</td>
-                    </tr>
-                    <tr>
-                      <td>Total</td>
-                      <td>$240</td>
-                    </tr>
-                  </tbody>
-                </table>
-                {"  "}
-              </div> */}
+                </div>
+              </div>
             </div>
           </div>
         </div>

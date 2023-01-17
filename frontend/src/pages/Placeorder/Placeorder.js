@@ -122,6 +122,8 @@ export default function Placeorder() {
                               src={item.image}
                               alt={item.name}
                               className="img-fluid rounded img-thumbnail"
+                              width={150}
+                              height={150}
                             ></img>{" "}
                             <Link to={`/product/${item.slug}`}>
                               {item.name}

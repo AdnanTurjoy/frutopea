@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 const Contact = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   return (
     <div>
       <div className="breadcrumb-section breadcrumb-bg">
@@ -83,8 +86,7 @@ const Contact = () => {
                     <i className="fas fa-map"></i> Shop Address
                   </h4>
                   <p>
-                    34/8, East Hukupara <br /> Gifirtok, Sadan. <br /> Country
-                    Name
+                    34/8, East Hukupara <br /> Adabor, Mohammadpur. <br /> Bangladesh
                   </p>
                 </div>
                 <div className="contact-form-box">
@@ -100,7 +102,7 @@ const Contact = () => {
                     <i className="fas fa-address-book"></i> Contact
                   </h4>
                   <p>
-                    Phone: +00 111 222 3333 <br /> Email: support@fruitkha.com
+                    Phone: +00 111 222 3333 <br /> Email: support@frutopea.com
                   </p>
                 </div>
               </div>

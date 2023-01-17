@@ -9,7 +9,7 @@ import Form from "react-bootstrap/Form";
 import Badge from "react-bootstrap/Badge";
 import Button from "react-bootstrap/Button";
 import Rating from "../../components/Rating/Rating";
-import productImg2 from "../../assets/img/products/product-img-4.jpg";
+
 import { getError } from "../../utils";
 import { Store } from "../../Store/Store";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
@@ -133,7 +133,7 @@ function ProductScreen() {
               <img
                 className="single-product-img"
                 //   src={selectedImage || product.image}
-                src={productImg2}
+                src={product.image}
                 alt={product.name}
               ></img>
             </Col>

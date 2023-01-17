@@ -1,12 +1,12 @@
 import React, { useContext } from "react";
 
-import productImg2 from "../../assets/img/products/product-img-2.jpg";
 import { Store } from "../../Store/Store";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 const Product = ({ product }) => {
   const { state, dispatch: ctxDispatch } = useContext(Store);
+  
   const { cart } = state;
   const addToCartHandler = async (item) => {
     const existItem = cart.cartItems.find((x) => x._id === product._id);
@@ -34,7 +34,7 @@ const Product = ({ product }) => {
       <div className="single-product-item">
         <div className="product-image">
           <Link to={`/product/${product?.slug}`}>
-            <img src={productImg2} alt="" />
+            <img src={product.image} alt={product.name} />
           </Link>
         </div>
         <h3>{product?.name}</h3>

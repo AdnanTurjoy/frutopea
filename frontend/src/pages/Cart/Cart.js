@@ -1,8 +1,8 @@
 import axios from "axios";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
-import productDemoImg from "../../assets/img/products/product-img-2.jpg";
+
 import { Store } from "../../Store/Store";
 export const Cart = () => {
   const navigate = useNavigate();
@@ -26,22 +26,11 @@ export const Cart = () => {
   const removeItemHandler = (item) => {
     ctxDispatch({ type: "CART_REMOVE_ITEM", payload: item });
   };
-  //console.log(cartItems);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   return (
     <div>
-      {/* <div className="breadcrumb-section breadcrumb-bg">
-        <div className="container">
-          <div className="row">
-            <div className="col-lg-8 offset-lg-2 text-center">
-              <div className="breadcrumb-text">
-                <p>Fresh and Organic</p>
-                <h1>Cart</h1>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div> */}
-
       <div className="cart-section mb-80" style={{ marginTop: "20px" }}>
         <div class="section-title" style={{ textAlign: "center" }}>
           <h3>Chart</h3>
@@ -74,7 +63,7 @@ export const Cart = () => {
                               </button>
                             </td>
                             <td className="product-image">
-                              <img src={productDemoImg} alt="" />
+                              <img src={item.image} alt="" />
                             </td>
                             <td className="product-name">{item.name}</td>
                             <td className="product-price">${item.price}</td>

@@ -1,10 +1,9 @@
 import React, { useContext, useEffect, useReducer, useState } from "react";
-import productImg1 from "../../assets/img/products/product-img-5.jpg";
-import productImg2 from "../../assets/img/products/product-img-4.jpg";
+
 import axios from "axios";
 import "./Product.css";
 import { Button, Spinner } from "react-bootstrap";
-import Data from "../../data";
+
 import Product from "../../components/Products/Product";
 import { toast } from "react-toastify";
 import { getError } from "../../utils";
@@ -65,6 +64,9 @@ const Products = () => {
         toast.error(getError(err));
       }
     };
+
+    window.scrollTo(0, 0);
+
     fetchCategories();
     fetchData();
   }, []);
@@ -136,7 +138,7 @@ const Products = () => {
               })}
           </div>
 
-          <div className="row">
+          {/* <div className="row">
             <div className="col-lg-12 text-center">
               <div className="pagination-wrap">
                 <ul>
@@ -160,7 +162,7 @@ const Products = () => {
                 </ul>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

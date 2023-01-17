@@ -5,6 +5,7 @@ import { getError } from "../../utils";
 import { Store } from "../../Store/Store";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { Spinner } from "react-bootstrap";
 const Login = () => {
   const navigate = useNavigate();
   const { search } = useLocation();
@@ -13,11 +14,12 @@ const Login = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const [loading, setLoading] = useState(false);
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const { userInfo } = state;
   const submitHandler = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const { data } = await axios.post(
         `${process.env.REACT_APP_API_URL}/api/users/signin`,
@@ -28,6 +30,7 @@ const Login = () => {
       );
       ctxDispatch({ type: "USER_SIGNIN", payload: data });
       localStorage.setItem("userInfo", JSON.stringify(data));
+      setLoading(false);
       navigate(redirect || "/");
     } catch (err) {
       toast.error(getError(err));
@@ -72,7 +75,7 @@ const Login = () => {
               className="btn btn-primary"
               style={{ backgroundColor: "#F28123", border: "none" }}
             >
-              Submit
+              Login {loading && <Spinner animation="border" size="sm" />}
             </button>
           </div>
           <p className="forgot-password text-right mt-2">

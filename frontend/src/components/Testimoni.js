@@ -1,5 +1,6 @@
 import React from "react";
 import avatar1 from "../assets/img/avaters/avatar1.png";
+import avatar2 from "../assets/img/avaters/avatar2.png";
 import { Pagination, A11y, Autoplay } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Container } from "react-bootstrap";
@@ -8,7 +9,7 @@ import "swiper/css/pagination";
 const Testimoni = () => {
   return (
     <div>
-      <div className="testimonail-section mt-150 mb-150">
+      <div className="testimonail-section mb-80" style={{ marginTop: "30px" }}>
         <div className="container">
           <div className="row">
             <div class="row">
@@ -40,7 +41,6 @@ const Testimoni = () => {
                     spaceBetween: 40,
                   },
                 }}
-               
               >
                 <SwiperSlide className="">
                   <div className="client-avater">
@@ -48,7 +48,7 @@ const Testimoni = () => {
                   </div>
                   <div className="client-meta">
                     <h3>
-					Elon musk <span>Local shop owner</span>
+                      Elon musk <span>Local shop owner</span>
                     </h3>
                     <p className="testimonial-body">
                       " Sed ut perspiciatis unde omnis iste natus error
@@ -61,9 +61,9 @@ const Testimoni = () => {
                     </div>
                   </div>
                 </SwiperSlide>
-				<SwiperSlide className="">
+                <SwiperSlide className="">
                   <div className="client-avater">
-                    <img src={avatar1} alt="" />
+                    <img src={avatar2} alt="" />
                   </div>
                   <div className="client-meta">
                     <h3>
@@ -80,14 +80,50 @@ const Testimoni = () => {
                     </div>
                   </div>
                 </SwiperSlide>
-                <div className="testimonial-paggination"></div>
+                <SwiperSlide className="">
+                  <div className="client-avater">
+                    <img src={avatar1} alt="" />
+                  </div>
+                  <div className="client-meta">
+                    <h3>
+                      Elon musk <span>Local shop owner</span>
+                    </h3>
+                    <p className="testimonial-body">
+                      " Sed ut perspiciatis unde omnis iste natus error
+                      veritatis et quasi architecto beatae vitae dict eaque ipsa
+                      quae ab illo inventore Sed ut perspiciatis unde omnis iste
+                      natus error sit voluptatem accusantium "
+                    </p>
+                    <div className="last-icon">
+                      <i className="fas fa-quote-right"></i>
+                    </div>
+                  </div>
+                </SwiperSlide>
+                <SwiperSlide className="">
+                  <div className="client-avater">
+                    <img src={avatar2} alt="" />
+                  </div>
+                  <div className="client-meta">
+                    <h3>
+                      Bill Gates <span>Local shop owner</span>
+                    </h3>
+                    <p className="testimonial-body">
+                      " Sed ut perspiciatis unde omnis iste natus error
+                      veritatis et quasi architecto beatae vitae dict eaque ipsa
+                      quae ab illo inventore Sed ut perspiciatis unde omnis iste
+                      natus error sit voluptatem accusantium "
+                    </p>
+                    <div className="last-icon">
+                      <i className="fas fa-quote-right"></i>
+                    </div>
+                  </div>
+                </SwiperSlide>
               </Swiper>
             </div>
           </div>
         </div>
       </div>
     </div>
-    
   );
 };
 

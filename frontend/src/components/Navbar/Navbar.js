@@ -13,8 +13,7 @@ const Header = () => {
   // CONTEXT API
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const { cart, userInfo } = state;
-  // const { state } = useContext(Store);
-  // const { cart } = state;
+
   const [navbar, setNavbar] = useState(false);
   const windowScroll = "navbarScroll";
   const windowNotScroll = "navbarNotScroll";
@@ -44,13 +43,15 @@ const Header = () => {
       collapseOnSelect
       expand="lg"
       className={`${navbar ? windowScroll : windowNotScroll} ${
-        location.pathname === "/" || location.pathname === "/about"
+        location.pathname === "/" ||
+        location.pathname === "/about" ||
+        location.pathname === "/contact"
           ? "fixedTop"
           : "stickyTop"
       }`}
     >
       <Container className="px-0">
-        <Navbar.Brand className="m-0" to="/">
+        <Navbar.Brand className="m-0">
           <img
             src="https://demo.alura-studio.com/orgafresh/wp-content/uploads/2018/07/logo3-bottom.png"
             alt=""
@@ -110,7 +111,10 @@ const Header = () => {
               smooth
               to="/cart"
             >
-              <i className="fas fa-shopping-cart">
+              <i
+                className="fas fa-shopping-cart "
+                style={{ marginRight: "18px" }}
+              >
                 {cart.cartItems.length > 0 && (
                   <Badge pill bg="danger">
                     {cart.cartItems.reduce((a, c) => a + c.quantity, 0)}
@@ -118,7 +122,7 @@ const Header = () => {
                 )}
               </i>
             </Link>
-            <Link
+            {/* <Link
               className={`${
                 activeLink === "/search" ? "active-link-color" : ""
               } navLink`}
@@ -127,7 +131,7 @@ const Header = () => {
               style={{ marginRight: "20px" }}
             >
               <i className="fas fa-search"></i>
-            </Link>
+            </Link> */}
           </Nav>
           {userInfo && !userInfo.isAdmin && (
             <div className="dropdown ">
@@ -137,6 +141,7 @@ const Header = () => {
                   backgroundColor: "#F28123",
                   color: "white",
                   border: "none",
+                  marginRight: "18px",
                 }}
                 role="button"
                 id="dropdownMenuLink"
@@ -185,6 +190,7 @@ const Header = () => {
                   backgroundColor: "#F28123",
                   color: "white",
                   border: "none",
+                  marginRight: "18px",
                 }}
                 role="button"
                 id="dropdownMenuLink"

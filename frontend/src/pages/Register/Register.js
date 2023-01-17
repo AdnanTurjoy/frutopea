@@ -5,6 +5,7 @@ import "./Register.css";
 import { getError } from "../../utils";
 import { Store } from "../../Store/Store";
 import axios from "axios";
+import { Spinner } from "react-bootstrap";
 const Register = () => {
   const navigate = useNavigate();
   const { search } = useLocation();
@@ -15,11 +16,13 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const { userInfo } = state;
   const submitHandler = async (e) => {
     e.preventDefault();
+    setLoading(true);
     if (password !== confirmPassword) {
       toast.error("Passwords do not match");
       return;
@@ -35,6 +38,7 @@ const Register = () => {
       );
       ctxDispatch({ type: "USER_SIGNIN", payload: data });
       localStorage.setItem("userInfo", JSON.stringify(data));
+      setLoading(false);
       navigate(redirect || "/");
     } catch (err) {
       toast.error(getError(err));
@@ -100,7 +104,7 @@ const Register = () => {
               className="btn btn-primary"
               style={{ backgroundColor: "#F28123", border: "none" }}
             >
-              Submit
+              Register {loading && <Spinner animation="border" size="sm" />}
             </button>
           </div>
           <p className="forgot-password text-right mt-2">

@@ -1,6 +1,4 @@
 import React, { useContext, useEffect, useReducer, useState } from "react";
-import productImg1 from "../../assets/img/products/product-img-5.jpg";
-import productImg2 from "../../assets/img/products/product-img-4.jpg";
 import axios from "axios";
 
 import Product from "./Product";

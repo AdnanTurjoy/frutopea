@@ -15,8 +15,8 @@ const Footer = () => {
                 <div className="footer-box get-in-touch">
                     <h2 className="widget-title">Get in Touch</h2>
                     <ul>
-                        <li>34/8, East Hukupara, Gifirtok, Sadan.</li>
-                        <li>support@fruitkha.com</li>
+                        <li>34/8, East Hukupara, Adabor, Mohammadpur.</li>
+                        <li>support@frutopea.com</li>
                         <li>+00 111 222 3333</li>
                     </ul>
                 </div>
