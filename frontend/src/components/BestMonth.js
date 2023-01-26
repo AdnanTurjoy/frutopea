@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useContext, useEffect, useReducer } from "react";
+import CountUp from "react-countup";
 import { useNavigate } from "react-router-dom";
 import deal from "../assets/img/deal.jpg";
 import { Store } from "../Store/Store";
@@ -17,7 +18,7 @@ const reducer = (state, action) => {
   }
 };
 const BestMonth = () => {
-  const slug = "pineapple-slug"; // Demo, Next time parfectly used for real time purposesssss...
+  const slug = "Strwaberry2-slug"; // Demo, Next time parfectly used for real time purposesssss...
   const navigate = useNavigate();
   const [{ loading, error, product, loadingCreateReview }, dispatch] =
     useReducer(reducer, {
@@ -25,6 +26,20 @@ const BestMonth = () => {
       loading: true,
       error: "",
     });
+  useEffect(() => {
+    const fetchData = async () => {
+      dispatch({ type: "FETCH_REQUEST" });
+      try {
+        const result = await axios.get(
+          `${process.env.REACT_APP_API_URL}/api/products/slug/${slug}`
+        );
+        dispatch({ type: "FETCH_SUCCESS", payload: result.data });
+      } catch (err) {
+        dispatch({ type: "FETCH_FAIL", payload: getError(err) });
+      }
+    };
+    fetchData();
+  }, [slug]);
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const { cart, userInfo } = state;
   const addToCartHandler = async () => {
@@ -43,20 +58,7 @@ const BestMonth = () => {
     });
     navigate("/cart");
   };
-  useEffect(() => {
-    const fetchData = async () => {
-      dispatch({ type: "FETCH_REQUEST" });
-      try {
-        const result = await axios.get(
-          `${process.env.REACT_APP_API_URL}/api/products/slug/${slug}`
-        );
-        dispatch({ type: "FETCH_SUCCESS", payload: result.data });
-      } catch (err) {
-        dispatch({ type: "FETCH_FAIL", payload: getError(err) });
-      }
-    };
-    fetchData();
-  }, [slug]);
+
   return (
     <div>
       <section class="cart-banner pb-100 " style={{ marginTop: "0px" }}>
@@ -90,22 +92,37 @@ const BestMonth = () => {
                 <div class="time-countdown clearfix" data-countdown="2020/2/01">
                   <div class="counter-column">
                     <div class="inner">
-                      <span class="count">00</span>Days
+                      <span class="count">
+                        <CountUp start={0} end={20} duration={3} />
+                      </span>
+                      Days
                     </div>
                   </div>{" "}
                   <div class="counter-column">
                     <div class="inner">
-                      <span class="count">00</span>Hours
+                      <span class="count">
+                        {" "}
+                        <CountUp start={0} end={14} duration={3} />
+                      </span>
+                      Hours
                     </div>
                   </div>{" "}
                   <div class="counter-column">
                     <div class="inner">
-                      <span class="count">00</span>Mins
+                      <span class="count">
+                        {" "}
+                        <CountUp start={0} end={80} duration={3} />
+                      </span>
+                      Mins
                     </div>
                   </div>{" "}
                   <div class="counter-column">
                     <div class="inner">
-                      <span class="count">00</span>Secs
+                      <span class="count">
+                        {" "}
+                        <CountUp start={0} end={420} duration={4} />
+                      </span>
+                      Secs
                     </div>
                   </div>
                 </div>

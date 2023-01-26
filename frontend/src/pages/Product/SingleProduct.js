@@ -38,6 +38,9 @@ const reducer = (state, action) => {
 };
 
 function ProductScreen() {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   let reviewsRef = useRef();
 
   const [rating, setRating] = useState(0);
