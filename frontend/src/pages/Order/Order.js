@@ -1,18 +1,19 @@
 import axios from "axios";
 import React, { useContext, useEffect, useReducer } from "react";
-import { usePayPalScriptReducer, PayPalButtons } from "@paypal/react-paypal-js";
+import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
 
 import { useNavigate, useParams } from "react-router-dom";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/Button";
 import ListGroup from "react-bootstrap/ListGroup";
 import Card from "react-bootstrap/Card";
 import { Link } from "react-router-dom";
 
-import { getError } from "../../utils";
 import { Store } from "../../Store/Store";
-import { Alert, Spinner } from "react-bootstrap";
+import { getError } from "../../utils";
 import { toast } from "react-toastify";
+import { Spinner } from "react-bootstrap";
 
 function reducer(state, action) {
   switch (action.type) {
@@ -30,12 +31,24 @@ function reducer(state, action) {
       return { ...state, loadingPay: false };
     case "PAY_RESET":
       return { ...state, loadingPay: false, successPay: false };
+
+    case "DELIVER_REQUEST":
+      return { ...state, loadingDeliver: true };
+    case "DELIVER_SUCCESS":
+      return { ...state, loadingDeliver: false, successDeliver: true };
+    case "DELIVER_FAIL":
+      return { ...state, loadingDeliver: false };
+    case "DELIVER_RESET":
+      return {
+        ...state,
+        loadingDeliver: false,
+        successDeliver: false,
+      };
     default:
       return state;
   }
 }
-
-export default function Order() {
+export default function OrderScreen() {
   const { state } = useContext(Store);
   const { userInfo } = state;
 
@@ -43,14 +56,24 @@ export default function Order() {
   const { id: orderId } = params;
   const navigate = useNavigate();
 
-  const [{ loading, error, order, successPay, loadingPay }, dispatch] =
-    useReducer(reducer, {
-      loading: true,
-      order: {},
-      error: "",
-      successPay: false,
-      loadingPay: false,
-    });
+  const [
+    {
+      loading,
+      error,
+      order,
+      successPay,
+      loadingPay,
+      loadingDeliver,
+      successDeliver,
+    },
+    dispatch,
+  ] = useReducer(reducer, {
+    loading: true,
+    order: {},
+    error: "",
+    successPay: false,
+    loadingPay: false,
+  });
 
   const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
 
@@ -95,12 +118,9 @@ export default function Order() {
     const fetchOrder = async () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
-        const { data } = await axios.get(
-          `${process.env.REACT_APP_API_URL}/api/orders/${orderId}`,
-          {
-            headers: { authorization: `Bearer ${userInfo.token}` },
-          }
-        );
+        const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/api/orders/${orderId}`, {
+          headers: { authorization: `Bearer ${userInfo.token}` },
+        });
         dispatch({ type: "FETCH_SUCCESS", payload: data });
       } catch (err) {
         dispatch({ type: "FETCH_FAIL", payload: getError(err) });
@@ -110,19 +130,24 @@ export default function Order() {
     if (!userInfo) {
       return navigate("/login");
     }
-    if (!order._id || successPay || (order._id && order._id !== orderId)) {
+    if (
+      !order._id ||
+      successPay ||
+      successDeliver ||
+      (order._id && order._id !== orderId)
+    ) {
       fetchOrder();
       if (successPay) {
         dispatch({ type: "PAY_RESET" });
       }
+      if (successDeliver) {
+        dispatch({ type: "DELIVER_RESET" });
+      }
     } else {
       const loadPaypalScript = async () => {
-        const { data: clientId } = await axios.get(
-          `${process.env.REACT_APP_API_URL}/api/keys/paypal`,
-          {
-            headers: { authorization: `Bearer ${userInfo.token}` },
-          }
-        );
+        const { data: clientId } = await axios.get(`${process.env.REACT_APP_API_URL}/api/keys/paypal`, {
+          headers: { authorization: `Bearer ${userInfo.token}` },
+        });
         paypalDispatch({
           type: "resetOptions",
           value: {
@@ -134,136 +159,169 @@ export default function Order() {
       };
       loadPaypalScript();
     }
-  }, [order, userInfo, orderId, navigate, paypalDispatch, successPay]);
+  }, [
+    order,
+    userInfo,
+    orderId,
+    navigate,
+    paypalDispatch,
+    successPay,
+    successDeliver,
+  ]);
 
-  return (
-    <div>
-      <div className="checkout-section mt-80 mb-110">
-        <div class="section-title" style={{ textAlign: "center" }}>
-          <h3>Order</h3>
-        </div>
-        <div className="container">
-          <h4>Order {orderId}</h4>
-          <div className="row">
-            <div className="col-lg-8">
-              <Card className="mb-3">
-                <Card.Body>
-                  <Card.Title>Shipping</Card.Title>
-                  <Card.Text>
-                    <strong>Name:</strong> {order?.shippingAddress?.fullName}{" "}
-                    <br />
-                    <strong>Address: </strong> {order?.shippingAddress?.address}
-                    ,{order?.shippingAddress?.city},{" "}
-                    {order?.shippingAddress?.postalCode},
-                    {order?.shippingAddress?.country}
-                  </Card.Text>
-                  {order?.isDelivered ? (
-                    <Alert variant="success">
-                      Delivered at {order?.deliveredAt}
-                    </Alert>
-                  ) : (
-                    <Alert variant="danger">Not Delivered</Alert>
-                  )}
-                </Card.Body>
-              </Card>
-              <Card className="mb-3">
-                <Card.Body>
-                  <Card.Title>Payment</Card.Title>
-                  <Card.Text>
-                    <strong>Method:</strong> {order.paymentMethod}
-                  </Card.Text>
-                  {order.isPaid ? (
-                    <Alert variant="success">Paid at {order.paidAt}</Alert>
-                  ) : (
-                    <Alert variant="danger">Not Paid </Alert>
-                  )}
-                </Card.Body>
-              </Card>
+  async function deliverOrderHandler() {
+    try {
+      dispatch({ type: "DELIVER_REQUEST" });
+      const { data } = await axios.put(
+        `${process.env.REACT_APP_API_URL}/api/orders/${order._id}/deliver`,
+        {},
+        {
+          headers: { authorization: `Bearer ${userInfo.token}` },
+        }
+      );
+      dispatch({ type: "DELIVER_SUCCESS", payload: data });
+      toast.success("Order is delivered");
+    } catch (err) {
+      toast.error(getError(err));
+      dispatch({ type: "DELIVER_FAIL" });
+    }
+  }
 
-              <Card className="mb-3">
-                <Card.Body>
-                  <Card.Title>Items</Card.Title>
-                  <ListGroup variant="flush">
-                    {order?.orderItems?.map((item) => (
-                      <ListGroup.Item key={item._id}>
-                        <Row className="align-items-center">
-                          <Col md={6}>
-                            <img
-                              src={item.image}
-                              alt={item.name}
-                              className="img-fluid rounded img-thumbnail"
-                            ></img>{" "}
-                            <Link to={`/product/${item.slug}`}>
-                              {item.name}
-                            </Link>
-                          </Col>
-                          <Col md={3}>
-                            <span>{item.quantity}</span>
-                          </Col>
-                          <Col md={3}>${item.price}</Col>
-                        </Row>
-                      </ListGroup.Item>
-                    ))}
-                  </ListGroup>
-                </Card.Body>
-              </Card>
-            </div>
-            <div className="col-lg-4" style={{ paddingBottom: "10px" }}>
-              <Card className="mb-3">
-                <Card.Body>
-                  <Card.Title>Order Summary</Card.Title>
-                  <ListGroup variant="flush">
-                    <ListGroup.Item>
-                      <Row>
-                        <Col>Items</Col>
-                        <Col>${order?.itemsPrice?.toFixed(2)}</Col>
-                      </Row>
-                    </ListGroup.Item>
-                    <ListGroup.Item>
-                      <Row>
-                        <Col>Shipping</Col>
-                        <Col>${order?.shippingPrice?.toFixed(2)}</Col>
-                      </Row>
-                    </ListGroup.Item>
-                    <ListGroup.Item>
-                      <Row>
-                        <Col>Tax</Col>
-                        <Col>${order?.taxPrice?.toFixed(2)}</Col>
-                      </Row>
-                    </ListGroup.Item>
-                    <ListGroup.Item>
-                      <Row>
-                        <Col>
-                          <strong> Order Total</strong>
-                        </Col>
-                        <Col>
-                          <strong>${order?.totalPrice?.toFixed(2)}</strong>
-                        </Col>
-                      </Row>
-                    </ListGroup.Item>
-                    {!order.isPaid && (
-                      <ListGroup.Item>
-                        {isPending ? (
-                          <Spinner animation="border" />
-                        ) : (
-                          <div>
-                            <PayPalButtons
-                              createOrder={createOrder}
-                              onApprove={onApprove}
-                              onError={onError}
-                            />
-                          </div>
-                        )}
-                        {loadingPay && <Spinner animation="border" />}
-                      </ListGroup.Item>
+  return loading ? (
+    <Spinner animation="border" />
+  ) : error ? (
+    toast.error(error)
+  ) : (
+    <div className="container">
+      <h1 className="my-3">Order {orderId}</h1>
+      <Row>
+        <Col md={8}>
+          <Card className="mb-3">
+            <Card.Body>
+              <Card.Title>Shipping</Card.Title>
+              <Card.Text>
+                <strong>Name:</strong> {order.shippingAddress.fullName} <br />
+                <strong>Address: </strong> {order.shippingAddress.address},
+                {order.shippingAddress.city}, {order.shippingAddress.postalCode}
+                ,{order.shippingAddress.country}
+                &nbsp;
+                {order.shippingAddress.location &&
+                  order.shippingAddress.location.lat && (
+                    <a
+                      target="_new"
+                      href={`https://maps.google.com?q=${order.shippingAddress.location.lat},${order.shippingAddress.location.lng}`}
+                    >
+                      Show On Map
+                    </a>
+                  )}
+              </Card.Text>
+              {order.isDelivered
+                ? toast.success(`Delivered at ${order.deliveredAt}`)
+                : toast.error("Not Delivered")}
+            </Card.Body>
+          </Card>
+          <Card className="mb-3">
+            <Card.Body>
+              <Card.Title>Payment</Card.Title>
+              <Card.Text>
+                <strong>Method:</strong> {order.paymentMethod}
+              </Card.Text>
+              {order.isPaid
+                ? toast.success(`Paid at ${order.paidAt}`)
+                : toast.error("Not Paid")}
+            </Card.Body>
+          </Card>
+
+          <Card className="mb-3">
+            <Card.Body>
+              <Card.Title>Items</Card.Title>
+              <ListGroup variant="flush">
+                {order.orderItems.map((item) => (
+                  <ListGroup.Item key={item._id}>
+                    <Row className="align-items-center">
+                      <Col md={6}>
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="img-fluid rounded img-thumbnail"
+                        ></img>{" "}
+                        <Link to={`/product/${item.slug}`}>{item.name}</Link>
+                      </Col>
+                      <Col md={3}>
+                        <span>{item.quantity}</span>
+                      </Col>
+                      <Col md={3}>${item.price}</Col>
+                    </Row>
+                  </ListGroup.Item>
+                ))}
+              </ListGroup>
+            </Card.Body>
+          </Card>
+        </Col>
+        <Col md={4}>
+          <Card className="mb-3">
+            <Card.Body>
+              <Card.Title>Order Summary</Card.Title>
+              <ListGroup variant="flush">
+                <ListGroup.Item>
+                  <Row>
+                    <Col>Items</Col>
+                    <Col>${order.itemsPrice.toFixed(2)}</Col>
+                  </Row>
+                </ListGroup.Item>
+                <ListGroup.Item>
+                  <Row>
+                    <Col>Shipping</Col>
+                    <Col>${order.shippingPrice.toFixed(2)}</Col>
+                  </Row>
+                </ListGroup.Item>
+                <ListGroup.Item>
+                  <Row>
+                    <Col>Tax</Col>
+                    <Col>${order.taxPrice.toFixed(2)}</Col>
+                  </Row>
+                </ListGroup.Item>
+                <ListGroup.Item>
+                  <Row>
+                    <Col>
+                      <strong> Order Total</strong>
+                    </Col>
+                    <Col>
+                      <strong>${order.totalPrice.toFixed(2)}</strong>
+                    </Col>
+                  </Row>
+                </ListGroup.Item>
+                {!order.isPaid && (
+                  <ListGroup.Item>
+                    {isPending ? (
+                      <Spinner animation="border" />
+                    ) : (
+                      <div>
+                        <PayPalButtons
+                          createOrder={createOrder}
+                          onApprove={onApprove}
+                          onError={onError}
+                        ></PayPalButtons>
+                      </div>
                     )}
-                  </ListGroup>
-                </Card.Body>
-              </Card>
-            </div>
-          </div>
-        </div>
-      </div>
+                    {loadingPay && <Spinner animation="border" />}
+                  </ListGroup.Item>
+                )}
+                {userInfo.isAdmin && order.isPaid && !order.isDelivered && (
+                  <ListGroup.Item>
+                    {loadingDeliver && <Spinner animation="border" />}
+                    <div className="d-grid">
+                      <Button type="button" onClick={deliverOrderHandler}>
+                        Deliver Order
+                      </Button>
+                    </div>
+                  </ListGroup.Item>
+                )}
+              </ListGroup>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
     </div>
   );
 }

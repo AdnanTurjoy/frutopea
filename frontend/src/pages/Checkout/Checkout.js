@@ -162,6 +162,25 @@ const Checkout = () => {
                                 placeholder="Say Something"
                               ></textarea>
                             </p>
+                            <div className="mb-3">
+                              <Button
+                                id="chooseOnMap"
+                                type="button"
+                                variant="light"
+                                onClick={() => navigate("/map")}
+                              >
+                                Choose Location On Map
+                              </Button>
+                              {shippingAddress.location &&
+                              shippingAddress.location.lat ? (
+                                <div>
+                                  LAT: {shippingAddress.location.lat}
+                                  LNG:{shippingAddress.location.lng}
+                                </div>
+                              ) : (
+                                <div>No location</div>
+                              )}
+                            </div>
                             <button
                               onClick={() => setIsShow(true)}
                               className="boxed-btn"
@@ -228,7 +247,7 @@ const Checkout = () => {
                               Place Order
                             </button>
                           ) : (
-                            <Badge  bg="danger">
+                            <Badge bg="danger">
                               Add Your Shipping Address First
                             </Badge>
                           )}
