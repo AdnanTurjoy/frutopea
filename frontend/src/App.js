@@ -53,7 +53,7 @@ function App() {
           </div>
         </div>
       )}
-
+      <ToastContainer position="bottom-center" limit={1} />
       <BrowserRouter>
         <div
           className={
@@ -67,7 +67,7 @@ function App() {
           }
         >
           <Navbar />
-          <ToastContainer position="bottom-center" limit={1} />
+
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />

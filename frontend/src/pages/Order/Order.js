@@ -118,9 +118,12 @@ export default function OrderScreen() {
     const fetchOrder = async () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
-        const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/api/orders/${orderId}`, {
-          headers: { authorization: `Bearer ${userInfo.token}` },
-        });
+        const { data } = await axios.get(
+          `${process.env.REACT_APP_API_URL}/api/orders/${orderId}`,
+          {
+            headers: { authorization: `Bearer ${userInfo.token}` },
+          }
+        );
         dispatch({ type: "FETCH_SUCCESS", payload: data });
       } catch (err) {
         dispatch({ type: "FETCH_FAIL", payload: getError(err) });
@@ -145,9 +148,12 @@ export default function OrderScreen() {
       }
     } else {
       const loadPaypalScript = async () => {
-        const { data: clientId } = await axios.get(`${process.env.REACT_APP_API_URL}/api/keys/paypal`, {
-          headers: { authorization: `Bearer ${userInfo.token}` },
-        });
+        const { data: clientId } = await axios.get(
+          `${process.env.REACT_APP_API_URL}/api/keys/paypal`,
+          {
+            headers: { authorization: `Bearer ${userInfo.token}` },
+          }
+        );
         paypalDispatch({
           type: "resetOptions",
           value: {
@@ -215,9 +221,9 @@ export default function OrderScreen() {
                     </a>
                   )}
               </Card.Text>
-              {order.isDelivered
+              {/* {order.isDelivered
                 ? toast.success(`Delivered at ${order.deliveredAt}`)
-                : toast.error("Not Delivered")}
+                : toast.error("Not Delivered")} */}
             </Card.Body>
           </Card>
           <Card className="mb-3">
@@ -226,9 +232,11 @@ export default function OrderScreen() {
               <Card.Text>
                 <strong>Method:</strong> {order.paymentMethod}
               </Card.Text>
-              {order.isPaid
+              {/* {order.isPaid
                 ? toast.success(`Paid at ${order.paidAt}`)
-                : toast.error("Not Paid")}
+                : toast.error("Not Paid", {
+                    toastId: "errorPaid",
+                  })} */}
             </Card.Body>
           </Card>
 

@@ -162,7 +162,7 @@ const Checkout = () => {
                                 placeholder="Say Something"
                               ></textarea>
                             </p>
-                            <div className="mb-3">
+                            {/* <div className="mb-3">
                               <Button
                                 id="chooseOnMap"
                                 type="button"
@@ -180,7 +180,7 @@ const Checkout = () => {
                               ) : (
                                 <div>No location</div>
                               )}
-                            </div>
+                            </div> */}
                             <button
                               onClick={() => setIsShow(true)}
                               className="boxed-btn"
