@@ -6,6 +6,7 @@ import { getError } from "../../utils";
 import { Store } from "../../Store/Store";
 import axios from "axios";
 import { Spinner } from "react-bootstrap";
+import { BackendServerUrl } from "../../Constant";
 const Register = () => {
   const navigate = useNavigate();
   const { search } = useLocation();
@@ -29,7 +30,7 @@ const Register = () => {
     }
     try {
       const { data } = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/users/signup`,
+        `${BackendServerUrl}/api/users/signup`,
         {
           name,
           email,

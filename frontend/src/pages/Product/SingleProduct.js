@@ -15,6 +15,7 @@ import { Store } from "../../Store/Store";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import { toast } from "react-toastify";
 import { Spinner } from "react-bootstrap";
+import { BackendServerUrl } from "../../Constant";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -62,7 +63,7 @@ function ProductScreen() {
       dispatch({ type: "FETCH_REQUEST" });
       try {
         const result = await axios.get(
-          `${process.env.REACT_APP_API_URL}/api/products/slug/${slug}`
+          `${BackendServerUrl}/api/products/slug/${slug}`
         );
         dispatch({ type: "FETCH_SUCCESS", payload: result.data });
       } catch (err) {
@@ -78,7 +79,7 @@ function ProductScreen() {
     const existItem = cart.cartItems.find((x) => x._id === product._id);
     const quantity = existItem ? existItem.quantity + 1 : 1;
     const { data } = await axios.get(
-      `${process.env.REACT_APP_API_URL}/api/products/${product._id}`
+      `${BackendServerUrl}/api/products/${product._id}`
     );
     if (data.countInStock < quantity) {
       window.alert("Sorry. Product is out of stock");
@@ -99,7 +100,7 @@ function ProductScreen() {
     }
     try {
       const { data } = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/products/${product._id}/reviews`,
+        `${BackendServerUrl}/api/products/${product._id}/reviews`,
         { rating, comment, name: userInfo.name },
         {
           headers: { Authorization: `Bearer ${userInfo.token}` },

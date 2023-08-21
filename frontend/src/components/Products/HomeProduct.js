@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useReducer, useState } from "react";
 import axios from "axios";
 
 import Product from "./Product";
+import { BackendServerUrl } from "../../Constant";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -39,7 +40,7 @@ const HomeProduct = () => {
       dispatch({ type: "FETCH_REQUEST" });
       try {
         const result = await axios.get(
-          `${process.env.REACT_APP_API_URL}/api/products`
+          `${BackendServerUrl}/api/products`
         );
 
         dispatch({ type: "FETCH_SUCCESS", payload: result.data });

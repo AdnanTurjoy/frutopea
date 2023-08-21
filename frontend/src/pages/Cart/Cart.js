@@ -4,6 +4,7 @@ import { Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 
 import { Store } from "../../Store/Store";
+import { BackendServerUrl } from "../../Constant";
 export const Cart = () => {
   const navigate = useNavigate();
   const { state, dispatch: ctxDispatch } = useContext(Store);
@@ -12,7 +13,7 @@ export const Cart = () => {
   } = state;
   const updateCartHandler = async (item, quantity) => {
     const { data } = await axios.get(
-      `${process.env.REACT_APP_API_URL}/api/products/${item._id}`
+      `${BackendServerUrl}/api/products/${item._id}`
     );
     if (data.countInStock < quantity) {
       window.alert("Sorry. Product is out of stock");

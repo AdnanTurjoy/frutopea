@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Store } from "../../Store/Store";
 import { getError } from "../../utils";
+import { BackendServerUrl } from "../../Constant";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -32,7 +33,7 @@ function OrderHistory(props) {
       dispatch({ type: "FETCH_REQUEST" });
       try {
         const { data } = await axios.get(
-          `${process.env.REACT_APP_API_URL}/api/orders/mine`,
+          `${BackendServerUrl}/api/orders/mine`,
 
           { headers: { Authorization: `Bearer ${userInfo.token}` } }
         );

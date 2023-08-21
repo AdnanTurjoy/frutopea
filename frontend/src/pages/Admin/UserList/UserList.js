@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 
 import { Store } from "../../../Store/Store";
 import { getError } from "../../../utils";
+import { BackendServerUrl } from "../../../Constant";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -53,7 +54,7 @@ export default function UserList() {
       try {
         dispatch({ type: "FETCH_REQUEST" });
         const { data } = await axios.get(
-          `${process.env.REACT_APP_API_URL}/api/users`,
+          `${BackendServerUrl}/api/users`,
           {
             headers: { Authorization: `Bearer ${userInfo.token}` },
           }
@@ -78,7 +79,7 @@ export default function UserList() {
       try {
         dispatch({ type: "DELETE_REQUEST" });
         await axios.delete(
-          `${process.env.REACT_APP_API_URL}/api/users/${user._id}`,
+          `${BackendServerUrl}/api/users/${user._id}`,
           {
             headers: { Authorization: `Bearer ${userInfo.token}` },
           }

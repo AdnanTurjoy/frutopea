@@ -12,6 +12,7 @@ import ListGroup from "react-bootstrap/ListGroup";
 import Form from "react-bootstrap/Form";
 
 import Button from "react-bootstrap/Button";
+import { BackendServerUrl } from "../../../Constant";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -70,7 +71,7 @@ export default function ProductEdit() {
       try {
         dispatch({ type: "FETCH_REQUEST" });
         const { data } = await axios.get(
-          `${process.env.REACT_APP_API_URL}/api/products/${productId}`
+          `${BackendServerUrl}/api/products/${productId}`
         );
         setName(data.name);
         setSlug(data.slug);
@@ -97,7 +98,7 @@ export default function ProductEdit() {
     try {
       dispatch({ type: "UPDATE_REQUEST" });
       await axios.put(
-        `${process.env.REACT_APP_API_URL}/api/products/${productId}`,
+        `${BackendServerUrl}/api/products/${productId}`,
         {
           _id: productId,
           name,
@@ -131,7 +132,7 @@ export default function ProductEdit() {
     try {
       dispatch({ type: "UPLOAD_REQUEST" });
       const { data } = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/upload`,
+        `${BackendServerUrl}/api/upload`,
         bodyFormData,
         {
           headers: {

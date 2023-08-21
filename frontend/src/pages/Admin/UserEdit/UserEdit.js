@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import { Store } from "../../../Store/Store";
 import { getError } from "../../../utils";
 import { Spinner } from "react-bootstrap";
+import { BackendServerUrl } from "../../../Constant";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -52,7 +53,7 @@ export default function UserEdit() {
       try {
         dispatch({ type: "FETCH_REQUEST" });
         const { data } = await axios.get(
-          `${process.env.REACT_APP_API_URL}/api/users/${userId}`,
+          `${BackendServerUrl}/api/users/${userId}`,
           {
             headers: { Authorization: `Bearer ${userInfo.token}` },
           }
@@ -76,7 +77,7 @@ export default function UserEdit() {
     try {
       dispatch({ type: "UPDATE_REQUEST" });
       await axios.put(
-        `${process.env.REACT_APP_API_URL}/api/users/${userId}`,
+        `${BackendServerUrl}/api/users/${userId}`,
         { _id: userId, name, email, isAdmin },
         {
           headers: { Authorization: `Bearer ${userInfo.token}` },

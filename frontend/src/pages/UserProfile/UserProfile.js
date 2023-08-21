@@ -9,6 +9,7 @@ import axios from "axios";
 import { getError } from "../../utils";
 import { Store } from "../../Store/Store";
 import { useNavigate } from "react-router-dom";
+import { BackendServerUrl } from "../../Constant";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -40,7 +41,7 @@ function UserProfile(props) {
     e.preventDefault();
     try {
       const { data } = await axios.put(
-        `${process.env.REACT_APP_API_URL}/api/users/profile`,
+        `${BackendServerUrl}/api/users/profile`,
         {
           name,
           email,

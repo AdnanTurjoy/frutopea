@@ -14,6 +14,7 @@ import { Store } from "../../Store/Store";
 import { getError } from "../../utils";
 import { toast } from "react-toastify";
 import { Spinner } from "react-bootstrap";
+import { BackendServerUrl } from "../../Constant";
 
 function reducer(state, action) {
   switch (action.type) {
@@ -96,7 +97,7 @@ export default function OrderScreen() {
       try {
         dispatch({ type: "PAY_REQUEST" });
         const { data } = await axios.put(
-          `${process.env.REACT_APP_API_URL}/api/orders/${order._id}/pay`,
+          `${BackendServerUrl}/api/orders/${order._id}/pay`,
           details,
           {
             headers: { authorization: `Bearer ${userInfo.token}` },
@@ -119,7 +120,7 @@ export default function OrderScreen() {
       try {
         dispatch({ type: "FETCH_REQUEST" });
         const { data } = await axios.get(
-          `${process.env.REACT_APP_API_URL}/api/orders/${orderId}`,
+          `${BackendServerUrl}/api/orders/${orderId}`,
           {
             headers: { authorization: `Bearer ${userInfo.token}` },
           }
@@ -149,7 +150,7 @@ export default function OrderScreen() {
     } else {
       const loadPaypalScript = async () => {
         const { data: clientId } = await axios.get(
-          `${process.env.REACT_APP_API_URL}/api/keys/paypal`,
+          `${BackendServerUrl}/api/keys/paypal`,
           {
             headers: { authorization: `Bearer ${userInfo.token}` },
           }
@@ -179,7 +180,7 @@ export default function OrderScreen() {
     try {
       dispatch({ type: "DELIVER_REQUEST" });
       const { data } = await axios.put(
-        `${process.env.REACT_APP_API_URL}/api/orders/${order._id}/deliver`,
+        `${BackendServerUrl}/api/orders/${order._id}/deliver`,
         {},
         {
           headers: { authorization: `Bearer ${userInfo.token}` },

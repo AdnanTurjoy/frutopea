@@ -4,6 +4,7 @@ import { Store } from "../../Store/Store";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
+import { BackendServerUrl } from "../../Constant";
 const Product = ({ product }) => {
   const { state, dispatch: ctxDispatch } = useContext(Store);
   
@@ -14,7 +15,7 @@ const Product = ({ product }) => {
     // API CALL `/api/products/${product._id}`
 
     const { data } = await axios.get(
-      `${process.env.REACT_APP_API_URL}/api/products/${item._id}`
+      `${BackendServerUrl}/api/products/${item._id}`
     );
     console.log(data);
     if (data.countInStock < quantity) {

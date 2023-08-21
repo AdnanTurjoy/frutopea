@@ -9,6 +9,7 @@ import Card from "react-bootstrap/Card";
 import { Store } from "../../Store/Store";
 import { Spinner } from "react-bootstrap";
 import { toast } from "react-toastify";
+import { BackendServerUrl } from "../../Constant";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -38,7 +39,7 @@ export default function Dashboard() {
     const fetchData = async () => {
       try {
         const { data } = await axios.get(
-          `${process.env.REACT_APP_API_URL}/api/orders/summary`,
+          `${BackendServerUrl}/api/orders/summary`,
           {
             headers: { Authorization: `Bearer ${userInfo.token}` },
           }

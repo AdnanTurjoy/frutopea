@@ -7,6 +7,7 @@ import { Button, Spinner } from "react-bootstrap";
 import Product from "../../components/Products/Product";
 import { toast } from "react-toastify";
 import { getError } from "../../utils";
+import { BackendServerUrl } from "../../Constant";
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_REQUEST":
@@ -46,7 +47,7 @@ const Products = () => {
       dispatch({ type: "FETCH_REQUEST" });
       try {
         const result = await axios.get(
-          `${process.env.REACT_APP_API_URL}/api/products`
+          `${BackendServerUrl}/api/products`
         );
         setTotalProducts(result.data);
         dispatch({ type: "FETCH_SUCCESS", payload: result.data });
@@ -57,7 +58,7 @@ const Products = () => {
     const fetchCategories = async () => {
       try {
         const { data } = await axios.get(
-          `${process.env.REACT_APP_API_URL}/api/products/categories`
+          `${BackendServerUrl}/api/products/categories`
         );
         setCategories(data);
       } catch (err) {

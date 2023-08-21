@@ -9,6 +9,7 @@ import { Store } from "../../../Store/Store";
 
 import { getError } from "../../../utils";
 import { Spinner } from "react-bootstrap";
+import { BackendServerUrl } from "../../../Constant";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -53,7 +54,7 @@ export default function OrderList() {
       try {
         dispatch({ type: "FETCH_REQUEST" });
         const { data } = await axios.get(
-          `${process.env.REACT_APP_API_URL}/api/orders`,
+          `${BackendServerUrl}/api/orders`,
           {
             headers: { Authorization: `Bearer ${userInfo.token}` },
           }
@@ -78,7 +79,7 @@ export default function OrderList() {
       try {
         dispatch({ type: "DELETE_REQUEST" });
         await axios.delete(
-          `${process.env.REACT_APP_API_URL}/api/orders/${order._id}`,
+          `${BackendServerUrl}/api/orders/${order._id}`,
           {
             headers: { Authorization: `Bearer ${userInfo.token}` },
           }

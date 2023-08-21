@@ -9,6 +9,7 @@ import { Store } from "../../../Store/Store";
 
 import { getError } from "../../../utils";
 import { Spinner } from "react-bootstrap";
+import { BackendServerUrl } from "../../../Constant";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -81,7 +82,7 @@ export default function ProductList() {
     const fetchData = async () => {
       try {
         const { data } = await axios.get(
-          `${process.env.REACT_APP_API_URL}/api/products/admin?page=${page} `,
+          `${BackendServerUrl}/api/products/admin?page=${page} `,
           {
             headers: { Authorization: `Bearer ${userInfo.token}` },
           }
@@ -103,7 +104,7 @@ export default function ProductList() {
       try {
         dispatch({ type: "CREATE_REQUEST" });
         const { data } = await axios.post(
-          `${process.env.REACT_APP_API_URL}/api/products`,
+          `${BackendServerUrl}/api/products`,
           {},
           {
             headers: { Authorization: `Bearer ${userInfo.token}` },
@@ -125,7 +126,7 @@ export default function ProductList() {
     if (window.confirm("Are you sure to delete?")) {
       try {
         await axios.delete(
-          `${process.env.REACT_APP_API_URL}/api/products/${product._id}`,
+          `${BackendServerUrl}/api/products/${product._id}`,
           {
             headers: { Authorization: `Bearer ${userInfo.token}` },
           }

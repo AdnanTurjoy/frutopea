@@ -10,6 +10,7 @@ import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import ListGroup from "react-bootstrap/ListGroup";
 import { Store } from "../../Store/Store";
+import { BackendServerUrl } from "../../Constant";
 
 export default function Placeorder() {
   const navigate = useNavigate();
@@ -44,7 +45,7 @@ export default function Placeorder() {
       dispatch({ type: "CREATE_REQUEST" });
 
       const { data } = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/orders`,
+        `${BackendServerUrl}/api/orders`,
         {
           orderItems: cart.cartItems,
           shippingAddress: cart.shippingAddress,
